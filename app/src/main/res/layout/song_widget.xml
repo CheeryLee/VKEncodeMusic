@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/song_widget_layout"
 	android:layout_width="match_parent"
@@ -9,18 +9,21 @@
 	
 	<TextView
     android:id="@+id/songName"
-    android:layout_width="300dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="left|center_vertical"
+    android:layout_alignParentLeft="true"
+    android:layout_toLeftOf="@+id/downloadButton"
+    android:layout_centerVertical="true"
     android:padding="5dp" />
     
     <ImageButton
     android:id="@+id/downloadButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="55dp"
+    android:layout_height="55dp"
+    android:layout_alignParentRight="true"
     android:src="@drawable/download" />
     
-</LinearLayout>
+</RelativeLayout>
 
 
 
