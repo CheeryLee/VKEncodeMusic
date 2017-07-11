@@ -149,8 +149,12 @@ public class MusicActivity extends AppCompatActivity {
 			for (int i = 0; i < files.length; i++)
 				fileNames[i] = files[i].getName().substring(0, files[i].getName().length() - 8);
 
-            warn_not_found_text.setVisibility(View.GONE);
-            createSongWidget(fileNames);
+            if (files.length > 0) {
+				warn_not_found_text.setVisibility(View.GONE);
+				createSongWidget(fileNames);
+			} else {
+				warn_not_found_text.setText(R.string.warn_not_found);
+			}
 		} else {
             warn_not_found_text.setText(R.string.warn_not_found);
 		}
