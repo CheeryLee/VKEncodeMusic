@@ -32,15 +32,19 @@ import android.os.Environment;
 public class SongWidget extends ArrayAdapter<String> {
 	private Context context;
 	private String values[];
+	int donePositions[];
 	
 	public SongWidget(Context _context, String _values[]) {
 		super(_context, R.layout.song_widget, _values);
 		context = _context;
-		values = _values;
+		values = _values;	
+		donePositions = new int[values.length];
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		final int pos = position;
+		
 		LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.song_widget, parent, false);
 		
@@ -48,6 +52,9 @@ public class SongWidget extends ArrayAdapter<String> {
 		final ImageButton button = (ImageButton)rowView.findViewById(R.id.downloadButton);
 		
 		filename_text.setText(values[position]);
+		
+		if (donePositions[position] == 1)
+			button.setImageResource(R.drawable.done);
 		
 		button.setOnClickListener(new OnClickListener() {
 			@Override
@@ -63,6 +70,7 @@ public class SongWidget extends ArrayAdapter<String> {
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
 				m_Encoder.processBytes();
 				
+				donePositions[pos] = 1;
 				button.setImageResource(R.drawable.done);
 			}
 		});
