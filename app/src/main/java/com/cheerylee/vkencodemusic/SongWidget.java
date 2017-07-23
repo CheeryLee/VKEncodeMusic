@@ -27,12 +27,13 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.os.Environment;
 
 public class SongWidget extends ArrayAdapter<String> {
 	private Context context;
 	private String values[];
-	int donePositions[];
+	static int donePositions[];
 	
 	public SongWidget(Context _context, String _values[]) {
 		super(_context, R.layout.song_widget, _values);
@@ -53,25 +54,23 @@ public class SongWidget extends ArrayAdapter<String> {
 		
 		filename_text.setText(values[position]);
 		
-		if (donePositions[position] == 1)
+		if (donePositions[position] == 1) {
 			button.setImageResource(R.drawable.done);
+			button.setEnabled(false);
+		}
 		
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String headerPath = Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/Android/data/com.vkontakte.android/files/Music/";
-                String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/Music/";
-                
-				String filename = headerPath + filename_text.getText().toString() + ".encoded";
-				String mp3Name = musicPath + filename_text.getText().toString() + ".mp3";
+				String filename = MusicActivity.encodedPath + filename_text.getText().toString() + ".encoded";
+				String mp3Name = MusicActivity.musicPath + filename_text.getText().toString() + ".mp3";
 				
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
 				m_Encoder.processBytes();
 				
 				donePositions[pos] = 1;
 				button.setImageResource(R.drawable.done);
+				button.setEnabled(false);
 			}
 		});
 		

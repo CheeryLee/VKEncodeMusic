@@ -97,12 +97,12 @@
             tools:layout_editor_absoluteY="31dp" />
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/ver_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="bottom"
-            android:text="1.0" />
+            android:text="" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
