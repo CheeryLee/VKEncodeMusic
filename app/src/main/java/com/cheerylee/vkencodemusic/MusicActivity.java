@@ -20,7 +20,6 @@
 package com.cheerylee.vkencodemusic;
 
 import java.io.*;
-import java.util.concurrent.TimeUnit;
 
 import android.Manifest;
 import android.content.Context;
@@ -41,7 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
-import android.util.Log;
 
 public class MusicActivity extends AppCompatActivity {
 
@@ -49,8 +47,10 @@ public class MusicActivity extends AppCompatActivity {
                 + "/Android/data/com.vkontakte.android/files/Music/";
 	static String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath()
 		+ "/Music/";
+	private int suCode;
 	private String fileNames[];
-	SongWidget w;
+	SongWidgetRoot w_root;
+	SongWidgetNonRoot w_nonroot;
 	File f_path;
 	File[] files;
 
@@ -74,6 +74,8 @@ public class MusicActivity extends AppCompatActivity {
 			new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
 		}
 
+		suCode = requestRootAccess();
+		
 		if (checkSD() == 1)
 			return;
 		else
@@ -132,14 +134,49 @@ public class MusicActivity extends AppCompatActivity {
 		int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
 		return permissionCheck == PackageManager.PERMISSION_GRANTED;
 	}
+	
+	//
+	// ЗАПРОС РУТ-ПРАВ ДЛЯ КОПИРОВАНИЯ БАЗЫ ДАННЫХ
+	//
+	private int requestRootAccess() {
+		Process p;
+		try {
+			String copy[] = {"su", "-c", "cp /data/data/com.vkontakte.android/databases/databaseVerThree.db /sdcard/Android/data/com.cheerylee.vkencodemusic/databaseVerThree.db"};
+			File myDir = new File("/sdcard/Android/data/com.cheerylee.vkencodemusic/");
+			if (!myDir.exists())
+				myDir.mkdirs();
+			p = Runtime.getRuntime().exec(copy);
+			
+			try {
+				p.waitFor();
+				return 1;
+			} catch (InterruptedException e) {
+				return 255;
+			}
+			
+		} catch (IOException ex) {
+			System.out.println(ex.getMessage());
+			return 255;
+		}
+	}
 
 	//
 	// СОЗДАНИЕ ЭЛЕМЕНТА СПИСКА
 	//
 	private void createSongWidget(String fileNames[]) {
 		ListView lvMain = (ListView) findViewById(R.id.lvMain);
-		w = new SongWidget(this, fileNames);
-		lvMain.setAdapter(w);
+		w_nonroot = new SongWidgetNonRoot(this, fileNames);
+		lvMain.setAdapter(w_nonroot);
+	}
+	
+	private void createSongWidget(File files[], String fileNames[]) {
+		String filePaths[] = new String[files.length];
+		for(int i = 0; i < files.length; i++)
+			filePaths[i] = files[i].getAbsolutePath();
+		
+		ListView lvMain = (ListView) findViewById(R.id.lvMain);
+		w_root = new SongWidgetRoot(this, filePaths, fileNames);
+		lvMain.setAdapter(w_root);
 	}
 
 	//
@@ -166,7 +203,10 @@ public class MusicActivity extends AppCompatActivity {
 					
 			if (files.length > 0) {
 				warn_not_found_text.setVisibility(View.GONE);
-				createSongWidget(fileNames);
+				if (suCode == 1)
+					createSongWidget(files, fileNames);
+				else
+					createSongWidget(fileNames);
 			} else {
 				warn_not_found_text.setText(R.string.warn_not_found);
 			}
@@ -180,8 +220,11 @@ public class MusicActivity extends AppCompatActivity {
 	//
 	private void processAllFiles(File[] files) {
 		if (files != null) {
-			ProcessTask task = new ProcessTask(this, w, files, fileNames);
-			
+			ProcessTask task;
+			if (suCode == 1)
+				task = new ProcessTask(this, w_root, files, fileNames);
+			else
+				task = new ProcessTask(this, w_nonroot, files, fileNames);
 			task.execute();
 		}
 	}
@@ -193,14 +236,27 @@ class ProcessTask extends AsyncTask<Void, Void, Void> {
 	String encodedPath, musicPath;
 	String fileNames[];
 	ProgressDialog dialog;
-	SongWidget w;
+	SongWidgetNonRoot w_nonroot;
+	SongWidgetRoot w_root;
 	Context context;
+	int suCode;
 	
-	ProcessTask(Context _context, SongWidget _w, File _files[], String _fileNames[]) {
+	// Конструктор с виджетом без рута 
+	ProcessTask(Context _context, SongWidgetNonRoot _w_nonroot, File _files[], String _fileNames[]) {
 		context = _context;
-		w = _w;
+		w_nonroot = _w_nonroot;
 		files = _files;
 		fileNames = _fileNames;
+		suCode = 255;
+		dialog = new ProgressDialog(context);
+	}
+	// Конструктор с виджетом для рута
+	ProcessTask(Context _context, SongWidgetRoot _w_root, File _files[], String _fileNames[]) {
+		context = _context;
+		w_root = _w_root;
+		files = _files;
+		fileNames = _fileNames;
+		suCode = 1;
 		dialog = new ProgressDialog(context);
 	}
 	
@@ -214,12 +270,22 @@ class ProcessTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		for (int i = 0; i < files.length; i++) {
-			if (SongWidget.donePositions[i] != 1) {
-				String filename = MusicActivity.encodedPath + fileNames[i] + ".encoded";
-				String mp3Name = MusicActivity.musicPath + fileNames[i] + ".mp3";
-				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
-				m_Encoder.processBytes();
-				SongWidget.donePositions[i] = 1;
+			if (suCode == 1) {
+				if (SongWidgetRoot.donePositions[i] != 1) {
+					String filename = MusicActivity.encodedPath + fileNames[i] + ".encoded";
+					String mp3Name = MusicActivity.musicPath + fileNames[i] + ".mp3";
+					MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
+					m_Encoder.processBytes();
+					SongWidgetRoot.donePositions[i] = 1;
+				}
+			} else {
+				if (SongWidgetNonRoot.donePositions[i] != 1) {
+					String filename = MusicActivity.encodedPath + fileNames[i] + ".encoded";
+					String mp3Name = MusicActivity.musicPath + fileNames[i] + ".mp3";
+					MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
+					m_Encoder.processBytes();
+					SongWidgetNonRoot.donePositions[i] = 1;
+				}
 			}
 		}
 		return null;
@@ -229,7 +295,11 @@ class ProcessTask extends AsyncTask<Void, Void, Void> {
 	protected void onPostExecute(Void result) {
 		if (dialog != null && dialog.isShowing())
 			dialog.dismiss();
-		w.notifyDataSetChanged();
+		if (suCode == 1)
+			w_root.notifyDataSetChanged();
+		else
+			w_nonroot.notifyDataSetChanged();
+			
 		super.onPostExecute(result);
 	}
 }
