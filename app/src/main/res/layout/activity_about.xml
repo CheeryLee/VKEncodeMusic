@@ -5,16 +5,43 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical">
 
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="36dp"
+		android:orientation="horizontal"
+		android:id="@+id/linearLayout">
+
+		<TextView
+			android:id="@+id/about_logo_text"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:text="VKEncodeMusic"
+			android:textSize="30sp"/>
+
+		<TextView
+			android:id="@+id/ver_text"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:gravity="bottom"
+			android:text=""/>
+
+	</LinearLayout>
+
 	<TextView
 		android:id="@+id/about_description_text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Программа позволяет перекодировать ENCODED-файлы в MP3 для прослушивания их в стороннем плеере.\n\nСначала нужно сохранить композицию в кэш ВК, затем запустить программу."/>
+		android:text="Программа позволяет перекодировать ENCODED-файлы в MP3 для прослушивания их в стороннем плеере.\n\nСначала нужно сохранить композицию в кэш ВК, затем запустить программу."
+		android:padding="12dp"/>
 
 	<GridLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/gridLayout">
+		android:id="@+id/gridLayout"
+		android:padding="12dp">
 
 		<TextView
 			android:id="@+id/about_4pda_text"
@@ -63,31 +90,6 @@
 			android:text="@string/about_github"/>
 
 	</GridLayout>
-
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="36dp"
-		android:orientation="horizontal"
-		android:id="@+id/linearLayout">
-
-		<TextView
-			android:id="@+id/about_logo_text"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:gravity="center"
-			android:text="VKEncodeMusic"
-			android:textSize="30sp"/>
-
-		<TextView
-			android:id="@+id/ver_text"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:gravity="bottom"
-			android:text=""/>
-
-	</LinearLayout>
 
 </LinearLayout>
 

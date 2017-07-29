@@ -22,13 +22,11 @@ package com.cheerylee.vkencodemusic;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.os.Environment;
 
 public class SongWidget extends ArrayAdapter<String> {
 	private Context context;
