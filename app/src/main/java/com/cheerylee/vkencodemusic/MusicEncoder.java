@@ -39,8 +39,9 @@ public class MusicEncoder {
 		
 		File encodedFile = new File(inFilename);
 		
-		try (FileInputStream finStream = new FileInputStream(encodedFile);
-			FileOutputStream foutStream = new FileOutputStream(outFilename)) {
+		try {
+			FileInputStream finStream = new FileInputStream(encodedFile);
+			FileOutputStream foutStream = new FileOutputStream(outFilename);
 			byte buffer[] = new byte[finStream.available()];
 			finStream.read(buffer, 0, finStream.available());
 			

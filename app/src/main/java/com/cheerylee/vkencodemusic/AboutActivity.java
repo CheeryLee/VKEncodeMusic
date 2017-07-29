@@ -19,13 +19,12 @@
 
 package com.cheerylee.vkencodemusic;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
-import com.cheerylee.vkencodemusic.BuildConfig;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +36,7 @@ public class AboutActivity extends AppCompatActivity {
         TextView about_github_text = (TextView)findViewById(R.id.about_github_text);
         TextView about_4pda_text = (TextView)findViewById(R.id.about_4pda_post_text);
 
-		ver_text.setText(BuildConfig.VERSION_NAME);
+//		ver_text.setText(BuildConfig.VERSION_NAME);
         about_glm_text.setMovementMethod(LinkMovementMethod.getInstance());
         about_github_text.setMovementMethod(LinkMovementMethod.getInstance());
         about_4pda_text.setMovementMethod(LinkMovementMethod.getInstance());

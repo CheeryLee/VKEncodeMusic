@@ -27,9 +27,6 @@ import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.os.Environment;
 import android.app.ProgressDialog;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.view.Menu;
@@ -40,8 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
+import android.app.Activity;
 
-public class MusicActivity extends AppCompatActivity {
+public class MusicActivity extends Activity {
 
 	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/Android/data/com.vkontakte.android/files/Music/";
@@ -70,8 +68,8 @@ public class MusicActivity extends AppCompatActivity {
 		// Разрешение на чтение памяти
 		if (!isPermissionGranted(Manifest.permission.READ_EXTERNAL_STORAGE) &&
 			!isPermissionGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			ActivityCompat.requestPermissions(this, 
-			new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
+//			requestPermissions(this, 
+//			new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 10001);
 		}
 
 		suCode = requestRootAccess();
@@ -108,7 +106,7 @@ public class MusicActivity extends AppCompatActivity {
 		return true;
 	}
 
-	@Override
+/*	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
 		if (requestCode == 10001) {
 			for (int i = 0; i < 2; i++) {
@@ -125,14 +123,14 @@ public class MusicActivity extends AppCompatActivity {
 		} else {
 			super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
-	}
+	}	*/
 
 	//
 	// ЕСЛИ РАЗРЕШЕНИЕ НА ПАМЯТЬ УЖЕ БЫЛО ПОЛУЧЕНО
 	//
 	private boolean isPermissionGranted(String permission) {
-		int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
-		return permissionCheck == PackageManager.PERMISSION_GRANTED;
+//		int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
+		return true;//permissionCheck == PackageManager.PERMISSION_GRANTED;
 	}
 	
 	//
