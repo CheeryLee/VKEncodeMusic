@@ -16,44 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with VKEncodeMusic.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 package com.cheerylee.vkencodemusic;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
-import android.os.Bundle;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import java.io.File;
 
 public class SQLReader {
-	private String artistName;
-	private String songName;
-	
-	private int iArtist;
-	private int iTitle;
-	private int iFilename;
-	
-	SQLiteDatabase db = SQLiteDatabase.openDatabase("/sdcard/Android/data/com.cheerylee.vkencodemusic/databaseVerThree.db", null, 0);
-	
-	public int getSong(String filename) {
-		Cursor c = db.query("saved_track", new String[] {"artist", "title", "file"}, null, null, null, null, null);
-		iArtist = c.getColumnIndex("artist");
-		iTitle = c.getColumnIndex("title");
-		iFilename = c.getColumnIndex("file");
-		
+
+	private SQLiteDatabase db;
+
+	public SQLReader(String path) throws SQLiteException {
+		File f = new File(path);
+		if (f.isDirectory() || !f.exists())
+			throw new SQLiteException("Database doesn't exist on path " + path);
+
+		db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+	}
+
+	public String[] getSong(String filename) {
+		Cursor c = db.query("saved_track", new String[] {"title", "artist", "file"}, null, null, null, null, null);
+
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-			if (c.getString(iFilename).compareTo(filename) == 0) {
-				artistName = c.getString(iArtist);
-				songName = c.getString(iTitle);
-				return 0;
+			if (c.getString(2).contains(filename)) {
+				return new String[]{c.getString(0), c.getString(1)};
 			}
 		}
-		return 1;
-	}
-	
-	public String getArtistName() {
-		return artistName;
-	}
-	
-	public String getSongName() {
-		return songName;
+		return null;
 	}
 }

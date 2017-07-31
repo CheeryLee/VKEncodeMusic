@@ -4,7 +4,8 @@
 	android:id="@+id/song_widget_root_layout"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:orientation="horizontal">
+	android:orientation="horizontal"
+	android:gravity="center">
 
 	<ImageButton
 		android:id="@+id/item_song_button"

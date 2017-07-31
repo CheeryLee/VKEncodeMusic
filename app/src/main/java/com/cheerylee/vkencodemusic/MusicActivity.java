@@ -33,7 +33,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MusicActivity extends Activity {
@@ -43,10 +42,12 @@ public class MusicActivity extends Activity {
 	private Handler handler = new Handler();
 	private boolean hasDatabase = false;
 
+	static String filesDir;
 	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.vkontakte.android/files/Music/";
 	static String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music/";
 
 	/* Собственно, данные для отображения
+	 * По-хорошему, надо бы заменить на класс
 	 * Каждый массив содержит:
 	 * [0] - путь
 	 * [1] - заголовок или null
@@ -60,6 +61,8 @@ public class MusicActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_music);
+
+		filesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/";//getFilesDir().getAbsolutePath();
 
 		// TODO: check android level
 		// TODO: ckeck permissions
@@ -77,7 +80,7 @@ public class MusicActivity extends Activity {
 		super.onResume();
 
 		if (isSDAccessible()) {
-			reloadMusic();
+			reloadMusicList();
 		} else {
 			// TODO: show warning message
 		}
@@ -112,23 +115,15 @@ public class MusicActivity extends Activity {
 	 */
 	private boolean copyDatabase() {
 		// TODO: move into external thread
-		Process p;
+
 		try {
-			String copy[] = {"su", "-c", "cp /data/data/com.vkontakte.android/databases/databaseVerThree.db /sdcard/Android/data/com.cheerylee.vkencodemusic/databaseVerThree.db"};
-			File myDir = new File("/sdcard/Android/data/com.cheerylee.vkencodemusic/");
-			if (!myDir.exists())
-				myDir.mkdirs();
-			p = Runtime.getRuntime().exec(copy);
+			String copy[] = {"su", "-c", "cp /data/data/com.vkontakte.android/databases/databaseVerThree.db " + filesDir + "/databaseVerThree.db"};
 
-			try {
-				p.waitFor();
-				return true;
-			} catch (InterruptedException e) {
-				return false;
-			}
-
-		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
+			Process p = Runtime.getRuntime().exec(copy);
+			p.waitFor();
+			return true;
+		} catch (Exception ex) {
+			Log.e(TAG, "Error while copying db", ex);
 			return false;
 		}
 	}
@@ -144,7 +139,7 @@ public class MusicActivity extends Activity {
 		}
 	}
 
-	private void reloadMusic() {
+	private void reloadMusicList() {
 		new Thread(){
 
 			@Override
@@ -156,62 +151,70 @@ public class MusicActivity extends Activity {
 				if (dir.exists()) {
 					File[] list = dir.listFiles();
 
-					SQLReader reader = null;
+					if (list != null) {
 
-					if (hasDatabase) {
-						try {
-							reader = new SQLReader();
-						} catch (Exception e) {
-							Log.e(TAG, "Couldn't instantiate db reader", e);
-							reader = null;
-						}
-					}
+						SQLReader reader = null;
 
-					ArrayList<String[]> newData = new ArrayList<String[]>();
-
-					for (File file : list) {
-						String[] item = new String[4];
-						String name = file.getName();
-						item[0] = name.substring(0, name.length() - 8);
-
-						if (reader != null) {
-							reader.getSong(name);
-							item[1] = reader.getSongName();
-							item[2] = reader.getArtistName();
+						if (hasDatabase) {
+							try {
+								reader = new SQLReader(filesDir + "/databaseVerThree.db");
+							} catch (Exception e) {
+								Log.e(TAG, "Couldn't instantiate db reader", e);
+								reader = null;
+							}
 						}
 
-						if (new File(musicPath + "/" + item[0] + ".mp3").exists()) {
-							item[3] = "";
+						ArrayList<String[]> newData = new ArrayList<String[]>();
+
+						for (File file : list) {
+							String[] item = new String[4];
+							String name = file.getName();
+							String ext = ".encoded";
+							item[0] = name.substring(0, name.length() - ext.length());
+
+							if (reader != null) {
+								String[] meta = reader.getSong(item[0]);
+								if (meta != null) {
+									item[1] = meta[0];
+									item[2] = meta[1];
+								} else {
+									Log.d(TAG, "Data for " + item[0] + " doesnt exist.");
+								}
+							}
+
+							if (new File(musicPath + "/" + item[0] + ".mp3").exists()) {
+								item[3] = "";
+							}
+
+							newData.add(item);
 						}
 
-						newData.add(item);
+						String[][] newDataArray = newData.toArray(new String[newData.size()][]);
+
+						synchronized (data) {
+							data = newDataArray;
+						}
+						doUpdateAdapter();
+
+						success = true;
 					}
-
-					String[][] newDataArray = newData.toArray(new String[newData.size()][]);
-
-					synchronized (data) {
-						data = newDataArray;
-					}
-					doUpdateAdapter();
-
-					success = true;
 				}
 
 				if (!success) {
-					doSetWarning();
+					doSetWarning("Error while reading list");
 				}
 			}
 		}.start();
 	}
 
-	private void doSetWarning() {
+	private void doSetWarning(final String warn) {
 		handler.post(new Runnable(){
 
 				@Override
 				public void run() {
 					TextView warnNotFoundText = (TextView)findViewById(R.id.warn_text);
-					warnNotFoundText.setVisibility(View.GONE);
-					warnNotFoundText.setText(R.string.warn_not_found);
+					warnNotFoundText.setVisibility(View.VISIBLE);
+					warnNotFoundText.setText(warn);
 				}
 			});
 	}
@@ -228,11 +231,11 @@ public class MusicActivity extends Activity {
 
 	class ProcessTask extends AsyncTask<Void, Void, Void> {
 		String[][] data;
-		String encodedPath, musicPath;
 		ProgressDialog dialog;
 
 		public ProcessTask(String[][] data) {
 			this.data = data;
+			dialog = new ProgressDialog(MusicActivity.this);
 		}
 
 		@Override
@@ -263,7 +266,7 @@ public class MusicActivity extends Activity {
 			if (dialog != null && dialog.isShowing())
 				dialog.dismiss();
 
-			super.onPostExecute(result);
+			doUpdateAdapter();
 		}
 	}
 }

@@ -46,16 +46,16 @@ public class MusicAdapter extends BaseAdapter {
 
 		String title = item[1];
 		String subtitle = item[2];
-		
-		TextView titleView = (TextView)rowView.findViewById(R.id.item_song_name);
-		TextView subtitleView = (TextView)rowView.findViewById(R.id.item_song_subtitle);
-		ImageButton button = (ImageButton)rowView.findViewById(R.id.item_song_button);
 
-		if(title == null) {
+		TextView titleView = (TextView) rowView.findViewById(R.id.item_song_name);
+		TextView subtitleView = (TextView) rowView.findViewById(R.id.item_song_subtitle);
+		ImageButton button = (ImageButton) rowView.findViewById(R.id.item_song_button);
+
+		if (title == null) {
 			title = item[0];
 		}
 		titleView.setText(title);
-		
+
 		if (subtitle != null) {
 			subtitleView.setText(subtitle);
 		}
@@ -66,6 +66,7 @@ public class MusicAdapter extends BaseAdapter {
 		}
 
 		button.setOnClickListener(new OnClickListener() {
+				
 				@Override
 				public void onClick(View v) {
 					String encodedName = MusicActivity.encodedPath + item[0] + ".encoded";
