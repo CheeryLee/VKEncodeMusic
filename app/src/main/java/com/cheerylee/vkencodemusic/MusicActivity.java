@@ -19,9 +19,11 @@
 
 package com.cheerylee.vkencodemusic;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -64,10 +67,6 @@ public class MusicActivity extends Activity {
 
 		filesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/";//getFilesDir().getAbsolutePath();
 
-		// TODO: check android level
-		// TODO: ckeck permissions
-		// TODO: request permissions on new androids
-
 		hasDatabase = copyDatabase();
 
 		ListView list = (ListView) findViewById(R.id.activity_music_list);
@@ -78,6 +77,12 @@ public class MusicActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		if (android.os.Build.VERSION.SDK_INT >= 23) {
+			if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+				|| checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+				requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+		}
 
 		if (isSDAccessible()) {
 			reloadMusicList();
@@ -108,6 +113,10 @@ public class MusicActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		reloadMusicList();
+	}
 
 	/**
 	 * Копирует базу данных из VK в приложение
