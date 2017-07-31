@@ -37,6 +37,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class MusicActivity extends Activity {
 
@@ -87,7 +89,17 @@ public class MusicActivity extends Activity {
 		if (isSDAccessible()) {
 			reloadMusicList();
 		} else {
-			// TODO: show warning message
+			new AlertDialog.Builder(this)
+				.setMessage("К сожалению, память недоступна. Приложение работать не может.")
+				.setCancelable(false)
+				.setPositiveButton("Ясно", new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface p1, int p2) {
+						finish();
+					}
+				})
+				.show();
 		}
 	}
 
