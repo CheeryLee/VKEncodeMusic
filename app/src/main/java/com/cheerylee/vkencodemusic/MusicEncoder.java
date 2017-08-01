@@ -19,7 +19,10 @@
 
 package com.cheerylee.vkencodemusic;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class MusicEncoder {
 	
@@ -39,8 +42,9 @@ public class MusicEncoder {
 		
 		File encodedFile = new File(inFilename);
 		
-		try (FileInputStream finStream = new FileInputStream(encodedFile);
-			FileOutputStream foutStream = new FileOutputStream(outFilename)) {
+		try {
+			FileInputStream finStream = new FileInputStream(encodedFile);
+			FileOutputStream foutStream = new FileOutputStream(outFilename);
 			byte buffer[] = new byte[finStream.available()];
 			finStream.read(buffer, 0, finStream.available());
 			
@@ -59,7 +63,9 @@ public class MusicEncoder {
 			foutStream.write(buffer, 0, buffer.length);
 			finStream.close();
 			foutStream.close();
-			encodedFile.delete();
+			
+			// TODO: НЕ НАДО ТЕРЕТЬ КЭШ БЕЗ ПРЕДУПРЕЖДЕНИЯ, ЯПОНАМАТЬ!
+//			encodedFile.delete();
 			
 		} catch (IOException ex) {
 			System.out.println(ex.getMessage());
