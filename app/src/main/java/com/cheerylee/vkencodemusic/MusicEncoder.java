@@ -64,8 +64,7 @@ public class MusicEncoder {
 			finStream.close();
 			foutStream.close();
 			
-			// TODO: НЕ НАДО ТЕРЕТЬ КЭШ БЕЗ ПРЕДУПРЕЖДЕНИЯ, ЯПОНАМАТЬ!
-//			encodedFile.delete();
+			encodedFile.delete();
 			
 		} catch (IOException ex) {
 			System.out.println(ex.getMessage());

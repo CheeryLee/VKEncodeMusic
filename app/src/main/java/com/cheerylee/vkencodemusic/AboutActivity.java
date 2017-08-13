@@ -36,7 +36,7 @@ public class AboutActivity extends Activity {
         TextView about_github_text = (TextView)findViewById(R.id.about_github_text);
         TextView about_4pda_text = (TextView)findViewById(R.id.about_4pda_post_text);
 
-//		ver_text.setText(BuildConfig.VERSION_NAME);
+	ver_text.setText("ver. " + BuildConfig.VERSION_NAME);
         about_glm_text.setMovementMethod(LinkMovementMethod.getInstance());
         about_github_text.setMovementMethod(LinkMovementMethod.getInstance());
         about_4pda_text.setMovementMethod(LinkMovementMethod.getInstance());

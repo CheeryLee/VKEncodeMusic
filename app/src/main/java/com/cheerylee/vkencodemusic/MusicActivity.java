@@ -45,7 +45,7 @@ public class MusicActivity extends Activity {
 	private static final String TAG = "vk-encoder";
 
 	private Handler handler = new Handler();
-	private boolean hasDatabase = false;
+	static boolean hasDatabase = false;
 
 	static String filesDir;
 	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.vkontakte.android/files/Music/";
@@ -216,9 +216,13 @@ public class MusicActivity extends Activity {
 							data = newDataArray;
 						}
 						doUpdateAdapter();
-
+						hideWarning();
+						
 						success = true;
 					}
+					
+					if (list == null || list.length < 1)
+						doSetWarning(getString(R.string.warn_not_found));
 				}
 
 				if (!success) {
@@ -236,6 +240,17 @@ public class MusicActivity extends Activity {
 					TextView warnNotFoundText = (TextView)findViewById(R.id.warn_text);
 					warnNotFoundText.setVisibility(View.VISIBLE);
 					warnNotFoundText.setText(warn);
+				}
+			});
+	}
+	
+	private void hideWarning() {
+		handler.post(new Runnable(){
+
+				@Override
+				public void run() {
+					TextView warnNotFoundText = (TextView)findViewById(R.id.warn_text);
+					warnNotFoundText.setVisibility(View.GONE);
 				}
 			});
 	}
@@ -272,7 +287,13 @@ public class MusicActivity extends Activity {
 				String[] item = data[i];
 
 				String filename = MusicActivity.encodedPath + item[0] + ".encoded";
-				String mp3Name = MusicActivity.musicPath + item[0] + ".mp3";
+				String mp3Name;
+				
+				if (hasDatabase == false)
+					mp3Name = MusicActivity.musicPath + item[0] + ".mp3";
+				else
+					mp3Name = MusicActivity.musicPath + item[2] + " - " + item[1] + ".mp3";
+				
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
 				m_Encoder.processBytes();
 

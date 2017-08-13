@@ -70,7 +70,12 @@ public class MusicAdapter extends BaseAdapter {
 				@Override
 				public void onClick(View v) {
 					String encodedName = MusicActivity.encodedPath + item[0] + ".encoded";
-					String mp3Name = MusicActivity.musicPath + item[0] + ".mp3";
+					String mp3Name;
+				
+					if (MusicActivity.hasDatabase == false)
+						mp3Name = MusicActivity.musicPath + item[0] + ".mp3";
+					else
+						mp3Name = MusicActivity.musicPath + item[2] + " - " + item[1] + ".mp3";
 
 					MusicEncoder m_Encoder = new MusicEncoder(encodedName, mp3Name);
 					m_Encoder.processBytes();
