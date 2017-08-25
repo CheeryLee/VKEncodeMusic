@@ -7,14 +7,15 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		android:layout_gravity="center">
 
 		<TextView
 			android:id="@+id/about_logo_text"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
-			android:text="VKEncodeMusic"
+			android:text="@string/app_name"
 			android:textSize="30sp"/>
 
 		<TextView
@@ -28,7 +29,7 @@
 			android:id="@+id/about_description_text"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="Программа позволяет перекодировать ENCODED-файлы в MP3 для прослушивания их в стороннем плеере.\n\nСначала нужно сохранить композицию в кэш ВК, затем запустить программу."
+			android:text="@string/app_description"
 			android:padding="12dp"/>
 
 		<GridLayout
@@ -43,7 +44,7 @@
 				android:layout_height="wrap_content"
 				android:layout_column="0"
 				android:layout_row="2"
-				android:text="4PDA:"/>
+				android:text="@string/_4pda_string"/>
 
 			<TextView
 				android:id="@+id/about_4pda_post_text"
@@ -57,7 +58,7 @@
 				android:layout_height="wrap_content"
 				android:layout_column="0"
 				android:layout_row="0"
-				android:text="Разработка:"/>
+				android:text="@string/glm_string"/>
 
 			<TextView
 				android:id="@+id/about_src_text"
@@ -65,7 +66,7 @@
 				android:layout_height="wrap_content"
 				android:layout_column="0"
 				android:layout_row="1"
-				android:text="Исходный код:"/>
+				android:text="@string/github_string"/>
 
 			<TextView
 				android:id="@+id/about_glm_text"

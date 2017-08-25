@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">VKEncodeMusic</string>
     <string name="app_about">О программе</string>
+    <string name="app_description">Программа позволяет перекодировать ENCODED-файлы в MP3 для прослушивания их в стороннем плеере.\n\nСначала нужно сохранить композицию в кэш ВК, затем запустить программу.</string>
+    
+    <string name="glm_string">Разработка:</string>
+    <string name="github_string">Исходный код:</string>
+    <string name="_4pda_string">4PDA:</string>
     <string name="god_loves_me"><a href="https://vk.com/cheerylee">CheeryLee</a>, <a href="https://github.com/iillyyaa2033">iillyyaa2033</a></string>
     <string name="about_github"><a href="https://github.com/CheeryLee/VKEncodeMusic">GitHub</a></string>
     <string name="about_4pda"><a href="https://4pda.ru/forum/index.php?showtopic=246233&amp;st=14600#entry62530686">Cсылка на пост</a></string>
