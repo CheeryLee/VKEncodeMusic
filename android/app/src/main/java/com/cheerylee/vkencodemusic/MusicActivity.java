@@ -67,7 +67,7 @@ public class MusicActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_music);
 
-		filesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/";//getFilesDir().getAbsolutePath();
+		filesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.cheerylee.vkencodemusic/";
 
 		hasDatabase = copyDatabase();
 
@@ -138,8 +138,11 @@ public class MusicActivity extends Activity {
 		// TODO: move into external thread
 
 		try {
-			String copy[] = {"su", "-c", "cp /data/data/com.vkontakte.android/databases/databaseVerThree.db " + filesDir + "/databaseVerThree.db"};
-
+			String copy[] = {"su", "-c", "cp /data/data/com.vkontakte.android/databases/databaseVerThree.db " + filesDir + "databaseVerThree.db"};
+			File myDir = new File(filesDir);
+			if (!myDir.exists())
+				myDir.mkdirs();
+				
 			Process p = Runtime.getRuntime().exec(copy);
 			p.waitFor();
 			return true;
@@ -178,7 +181,7 @@ public class MusicActivity extends Activity {
 
 						if (hasDatabase) {
 							try {
-								reader = new SQLReader(filesDir + "/databaseVerThree.db");
+								reader = new SQLReader(filesDir + "databaseVerThree.db");
 							} catch (Exception e) {
 								Log.e(TAG, "Couldn't instantiate db reader", e);
 								reader = null;
