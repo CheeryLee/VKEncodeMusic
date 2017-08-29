@@ -30,59 +30,53 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/app_description"
+			android:gravity="center"
 			android:padding="12dp"/>
 
 		<GridLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/gridLayout"
+			android:columnCount="2"
+			android:rowCount="3"
+			android:layout_gravity="center"
 			android:padding="12dp">
 
 			<TextView
+				android:id="@+id/about_dev_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/glm_string"/>
+
+			<TextView
+				android:id="@+id/about_glm_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/god_loves_me"/>
+
+			<TextView
+				android:id="@+id/about_src_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/github_string"/>
+
+			<TextView
+				android:id="@+id/about_github_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/about_github"/>
+
+			<TextView
 				android:id="@+id/about_4pda_text"
-				android:layout_width="150dp"
-				android:layout_height="wrap_content"
-				android:layout_column="0"
-				android:layout_row="2"
+				android:gravity="center"
+				android:layout_columnWeight="1"
 				android:text="@string/_4pda_string"/>
 
 			<TextView
 				android:id="@+id/about_4pda_post_text"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:layout_columnWeight="1"
 				android:text="@string/about_4pda"/>
-
-			<TextView
-				android:id="@+id/about_dev_text"
-				android:layout_width="150dp"
-				android:layout_height="wrap_content"
-				android:layout_column="0"
-				android:layout_row="0"
-				android:text="@string/glm_string"/>
-
-			<TextView
-				android:id="@+id/about_src_text"
-				android:layout_width="150dp"
-				android:layout_height="wrap_content"
-				android:layout_column="0"
-				android:layout_row="1"
-				android:text="@string/github_string"/>
-
-			<TextView
-				android:id="@+id/about_glm_text"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_column="1"
-				android:layout_row="0"
-				android:text="@string/god_loves_me"/>
-
-			<TextView
-				android:id="@+id/about_github_text"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_column="1"
-				android:layout_row="1"
-				android:text="@string/about_github"/>
 
 		</GridLayout>
 
