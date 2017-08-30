@@ -25,7 +25,7 @@
 		android:padding="5dp"/>
 
 	<TextView
-		android:id="@+id/item_song_subtitle"
+		android:id="@+id/item_song_artist"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"

@@ -36,6 +36,12 @@ public class SQLReader {
 		db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 	}
 
+	/**
+	 * Получает данные о композиции из базы
+	 * @returns
+	 * [0] - название
+	 * [1] - исполнитель
+	 */
 	public String[] getSong(String filename) {
 		Cursor c = db.query("saved_track", new String[] {"title", "artist", "file"}, null, null, null, null, null);
 

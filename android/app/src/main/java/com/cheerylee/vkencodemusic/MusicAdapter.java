@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.cheerylee.vkencodemusic.MusicActivity;
 import com.cheerylee.vkencodemusic.MusicEncoder;
+import com.cheerylee.vkencodemusic.Song;
 import com.cheerylee.vkencodemusic.R;
 
 public class MusicAdapter extends BaseAdapter {
@@ -29,7 +30,7 @@ public class MusicAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public String[] getItem(int p1) {
+	public Song getItem(int p1) {
 		return MusicActivity.data[p1];
 	}
 
@@ -42,25 +43,25 @@ public class MusicAdapter extends BaseAdapter {
 	public View getView(final int p1, View p2, ViewGroup p3) {
 		View rowView = inflater.inflate(R.layout.item_song, null, false);
 
-		final String[] item = getItem(p1);
+		final Song songItem = getItem(p1);
 
-		String title = item[1];
-		String subtitle = item[2];
+		String title = songItem.getTitle();
+		String artist = songItem.getArtist();
 
 		TextView titleView = (TextView) rowView.findViewById(R.id.item_song_name);
-		TextView subtitleView = (TextView) rowView.findViewById(R.id.item_song_subtitle);
+		TextView artistView = (TextView) rowView.findViewById(R.id.item_song_artist);
 		ImageButton button = (ImageButton) rowView.findViewById(R.id.item_song_button);
 
 		if (title == null) {
-			title = item[0];
+			title = songItem.getPath();
 		}
 		titleView.setText(title);
 
-		if (subtitle != null) {
-			subtitleView.setText(subtitle);
+		if (artist != null) {
+			artistView.setText(artist);
 		}
 
-		if (item[3] != null) {
+		if (songItem.isSongDecoded() == true) {
 			button.setImageResource(R.drawable.done);
 			button.setEnabled(false);
 		}
@@ -69,18 +70,18 @@ public class MusicAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					String encodedName = MusicActivity.encodedPath + item[0] + ".encoded";
+					String encodedName = MusicActivity.encodedPath + songItem.getPath() + ".encoded";
 					String mp3Name;
 				
 					if (MusicActivity.hasDatabase == false)
-						mp3Name = MusicActivity.musicPath + item[0] + ".mp3";
+						mp3Name = MusicActivity.musicPath + songItem.getPath() + ".mp3";
 					else
-						mp3Name = MusicActivity.musicPath + item[2] + " - " + item[1] + ".mp3";
+						mp3Name = MusicActivity.musicPath + songItem.getArtist() + " - " + songItem.getTitle() + ".mp3";
 
 					MusicEncoder m_Encoder = new MusicEncoder(encodedName, mp3Name);
 					m_Encoder.processBytes();
 
-					MusicActivity.data[p1][3] = "";
+					MusicActivity.data[p1].setDecoded(true);
 					notifyDataSetChanged();
 				}
 			});

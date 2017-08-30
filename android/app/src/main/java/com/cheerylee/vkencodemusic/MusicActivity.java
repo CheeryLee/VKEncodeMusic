@@ -51,15 +51,7 @@ public class MusicActivity extends Activity {
 	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.vkontakte.android/files/Music/";
 	static String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music/";
 
-	/* Собственно, данные для отображения
-	 * По-хорошему, надо бы заменить на класс
-	 * Каждый массив содержит:
-	 * [0] - путь
-	 * [1] - заголовок или null
-	 * [2] - подзаголовок или null
-	 * [3] - флаг: null - песня не декодирована, иначе декодирована
-	 */
-	public static String[][] data = {};
+	public static Song[] data = { };
 	private MusicAdapter adapter;
 
 	@Override
@@ -98,8 +90,7 @@ public class MusicActivity extends Activity {
 					public void onClick(DialogInterface p1, int p2) {
 						finish();
 					}
-				})
-				.show();
+				}).show();
 		}
 	}
 
@@ -188,35 +179,34 @@ public class MusicActivity extends Activity {
 							}
 						}
 
-						ArrayList<String[]> newData = new ArrayList<String[]>();
+						ArrayList<Song> songData = new ArrayList<Song>();
 
 						for (File file : list) {
-							String[] item = new String[4];
-							String name = file.getName();
+							Song songItem = new Song();
 							String ext = ".encoded";
-							item[0] = name.substring(0, name.length() - ext.length());
+							String name = file.getName();
+							name = name.substring(0, name.length() - ext.length());
+							songItem.setPath(name);
 
 							if (reader != null) {
-								String[] meta = reader.getSong(item[0]);
+								String[] meta = reader.getSong(name);
 								if (meta != null) {
-									item[1] = meta[0];
-									item[2] = meta[1];
+									songItem.setArtist(meta[1]);
+									songItem.setTitle(meta[0]);
 								} else {
-									Log.d(TAG, "Data for " + item[0] + " doesnt exist.");
+									Log.d(TAG, "Data for " + name + " doesn't exist.");
 								}
 							}
 
-							if (new File(musicPath + "/" + item[0] + ".mp3").exists()) {
-								item[3] = "";
+							if (new File(musicPath + "/" + name + ".mp3").exists()) {
+								songItem.setDecoded(true);
 							}
 
-							newData.add(item);
+							songData.add(songItem);
 						}
 
-						String[][] newDataArray = newData.toArray(new String[newData.size()][]);
-
 						synchronized (data) {
-							data = newDataArray;
+							data = songData.toArray(new Song[songData.size()]);
 						}
 						doUpdateAdapter();
 						hideWarning();
@@ -269,10 +259,10 @@ public class MusicActivity extends Activity {
 	}
 
 	class ProcessTask extends AsyncTask<Void, Void, Void> {
-		String[][] data;
+		Song[] data;
 		ProgressDialog dialog;
 
-		public ProcessTask(String[][] data) {
+		public ProcessTask(Song[] data) {
 			this.data = data;
 			dialog = new ProgressDialog(MusicActivity.this);
 		}
@@ -287,20 +277,20 @@ public class MusicActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			for (int i = 0; i < data.length; i++) {
-				String[] item = data[i];
+				Song songItem = data[i];
 
-				String filename = MusicActivity.encodedPath + item[0] + ".encoded";
+				String filename = MusicActivity.encodedPath + songItem.getPath() + ".encoded";
 				String mp3Name;
 				
 				if (hasDatabase == false)
-					mp3Name = MusicActivity.musicPath + item[0] + ".mp3";
+					mp3Name = MusicActivity.musicPath + songItem.getPath() + ".mp3";
 				else
-					mp3Name = MusicActivity.musicPath + item[2] + " - " + item[1] + ".mp3";
+					mp3Name = MusicActivity.musicPath + songItem.getArtist() + " - " + songItem.getTitle() + ".mp3";
 				
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
 				m_Encoder.processBytes();
 
-				data[i][3] = "";
+				data[i].setDecoded(true);
 			}
 
 			return null;
