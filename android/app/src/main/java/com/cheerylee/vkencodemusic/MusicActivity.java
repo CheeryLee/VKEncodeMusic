@@ -51,14 +51,6 @@ public class MusicActivity extends Activity {
 	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.vkontakte.android/files/Music/";
 	static String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music/";
 
-	/* Собственно, данные для отображения
-	 * По-хорошему, надо бы заменить на класс
-	 * Каждый массив содержит:
-	 * [0] - путь
-	 * [1] - заголовок или null
-	 * [2] - подзаголовок или null
-	 * [3] - флаг: null - песня не декодирована, иначе декодирована
-	 */
 	public static Song[] data = { };
 	private MusicAdapter adapter;
 
