@@ -51,6 +51,14 @@ public class MusicActivity extends Activity {
 	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.vkontakte.android/files/Music/";
 	static String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music/";
 
+	/* Собственно, данные для отображения
+	 * По-хорошему, надо бы заменить на класс
+	 * Каждый массив содержит:
+	 * [0] - путь
+	 * [1] - заголовок или null
+	 * [2] - подзаголовок или null
+	 * [3] - флаг: null - песня не декодирована, иначе декодирована
+	 */
 	public static Song[] data = { };
 	private MusicAdapter adapter;
 
@@ -90,7 +98,8 @@ public class MusicActivity extends Activity {
 					public void onClick(DialogInterface p1, int p2) {
 						finish();
 					}
-				}).show();
+				})
+				.show();
 		}
 	}
 
@@ -185,20 +194,19 @@ public class MusicActivity extends Activity {
 							Song songItem = new Song();
 							String ext = ".encoded";
 							String name = file.getName();
-							name = name.substring(0, name.length() - ext.length());
-							songItem.setPath(name);
+							songItem.setFilename(name.substring(0, name.length() - ext.length()));
 
 							if (reader != null) {
-								String[] meta = reader.getSong(name);
+								String[] meta = reader.getSong(songItem.getFilename());
 								if (meta != null) {
-									songItem.setArtist(meta[1]);
 									songItem.setTitle(meta[0]);
+									songItem.setArtist(meta[1]);
 								} else {
-									Log.d(TAG, "Data for " + name + " doesn't exist.");
+									Log.d(TAG, "Data for " + songItem.getFilename() + " doesnt exist.");
 								}
 							}
 
-							if (new File(musicPath + "/" + name + ".mp3").exists()) {
+							if (new File(musicPath + "/" + songItem.getFilename() + ".mp3").exists()) {
 								songItem.setDecoded(true);
 							}
 
@@ -279,11 +287,11 @@ public class MusicActivity extends Activity {
 			for (int i = 0; i < data.length; i++) {
 				Song songItem = data[i];
 
-				String filename = MusicActivity.encodedPath + songItem.getPath() + ".encoded";
+				String filename = MusicActivity.encodedPath + songItem.getFilename() + ".encoded";
 				String mp3Name;
 				
 				if (hasDatabase == false)
-					mp3Name = MusicActivity.musicPath + songItem.getPath() + ".mp3";
+					mp3Name = MusicActivity.musicPath + songItem.getFilename() + ".mp3";
 				else
 					mp3Name = MusicActivity.musicPath + songItem.getArtist() + " - " + songItem.getTitle() + ".mp3";
 				

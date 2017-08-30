@@ -20,47 +20,21 @@
 package com.cheerylee.vkencodemusic;
 
 public class Song {
-    
-    String path;
-    String artist;
+
+    String filename;
     String title;
+    String artist;
     boolean isDecoded;
 
-    // public Song(String path, String artist, String title) {
-    //     this.path = path;
-    //     this.artist = artist;
-    //     this.title = title;
-    // }
+    public void setFilename(String filename) { this.filename = filename; }
+    public void setTitle(String title) { this.title = title; }
+    public void setArtist(String artist) { this.artist = artist; }
+    public void setDecoded(boolean isDecoded) { this.isDecoded = isDecoded; }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDecoded(boolean isDecoded) {
-        this.isDecoded = isDecoded;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public boolean isSongDecoded() {
+    public String getFilename() { return filename; }
+    public String getTitle() { return title; }
+    public String getArtist() { return artist; }
+    public boolean getSongDecoded() {
         if (isDecoded == true)
             return true;
         return false;

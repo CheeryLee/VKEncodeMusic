@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.cheerylee.vkencodemusic.MusicActivity;
 import com.cheerylee.vkencodemusic.MusicEncoder;
-import com.cheerylee.vkencodemusic.Song;
 import com.cheerylee.vkencodemusic.R;
 
 public class MusicAdapter extends BaseAdapter {
@@ -53,7 +52,7 @@ public class MusicAdapter extends BaseAdapter {
 		ImageButton button = (ImageButton) rowView.findViewById(R.id.item_song_button);
 
 		if (title == null) {
-			title = songItem.getPath();
+			title = songItem.getFilename();
 		}
 		titleView.setText(title);
 
@@ -61,7 +60,7 @@ public class MusicAdapter extends BaseAdapter {
 			artistView.setText(artist);
 		}
 
-		if (songItem.isSongDecoded() == true) {
+		if (songItem.getSongDecoded() == true) {
 			button.setImageResource(R.drawable.done);
 			button.setEnabled(false);
 		}
@@ -70,11 +69,11 @@ public class MusicAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					String encodedName = MusicActivity.encodedPath + songItem.getPath() + ".encoded";
+					String encodedName = MusicActivity.encodedPath + songItem.getFilename() + ".encoded";
 					String mp3Name;
 				
 					if (MusicActivity.hasDatabase == false)
-						mp3Name = MusicActivity.musicPath + songItem.getPath() + ".mp3";
+						mp3Name = MusicActivity.musicPath + songItem.getFilename() + ".mp3";
 					else
 						mp3Name = MusicActivity.musicPath + songItem.getArtist() + " - " + songItem.getTitle() + ".mp3";
 
