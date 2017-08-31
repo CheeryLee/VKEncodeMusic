@@ -10,8 +10,14 @@
         android:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_about"
+        android:id="@+id/action_settings"
         android:orderInCategory="2"
+        android:title="Настройки"
+        android:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="3"
         android:title="О программе"
         android:showAsAction="never"/>
 </menu>

@@ -58,6 +58,11 @@ public class MusicActivity extends Activity {
 
 	public static ArrayList<Song> data = new ArrayList<Song>();
 	private MusicAdapter adapter;
+	private static Context context;
+	public static Settings m_Settings;
+
+	// Объекты настроек
+	public static boolean useHumanityFilename;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,11 @@ public class MusicActivity extends Activity {
 		ListView list = (ListView) findViewById(R.id.activity_music_list);
 		adapter = new MusicAdapter(this);
 		list.setAdapter(adapter);
+
+		context = getApplicationContext();
+		m_Settings = new Settings(context, Context.MODE_PRIVATE);
+
+		useHumanityFilename = m_Settings.getBoolean("useHumanityFilename");
 	}
 
 	@Override
@@ -108,6 +118,10 @@ public class MusicActivity extends Activity {
 		switch (id) {
 			case R.id.action_process_all:
 				new ProcessTask(data).execute();
+				return true;
+			case R.id.action_settings:
+				Intent settings_intent = new Intent(MusicActivity.this, SettingsActivity.class);
+				startActivity(settings_intent);
 				return true;
 			case R.id.action_about:
 				Intent about_intent = new Intent(MusicActivity.this, AboutActivity.class);
@@ -316,11 +330,11 @@ public class MusicActivity extends Activity {
 				Song songItem = data[j];
 
 				String filename = songItem.getPath();
-				String mp3Name;
+				String mp3Name = "";
 				
-				if (hasDatabase == false)
+				if (useHumanityFilename == false || hasDatabase == false)
 					mp3Name = MusicActivity.musicPath + songItem.getFilename() + ".mp3";
-				else
+				if (useHumanityFilename == true && hasDatabase == true)
 					mp3Name = MusicActivity.musicPath + songItem.getArtist() + " - " + songItem.getTitle() + ".mp3";
 				
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);

@@ -24,6 +24,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SettingsActivity"
+            android:label="@string/app_settings">
+        </activity>
+        <activity
             android:name=".AboutActivity"
             android:label="@string/app_about">
         </activity>
