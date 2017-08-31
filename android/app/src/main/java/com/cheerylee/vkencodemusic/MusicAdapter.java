@@ -25,12 +25,12 @@ public class MusicAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return MusicActivity.data.length;
+		return MusicActivity.data.size();
 	}
 
 	@Override
 	public Song getItem(int p1) {
-		return MusicActivity.data[p1];
+		return MusicActivity.data.get(p1);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class MusicAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					String encodedName = MusicActivity.encodedPath + songItem.getFilename() + ".encoded";
+					String encodedName = songItem.getPath();
 					String mp3Name;
 				
 					if (MusicActivity.hasDatabase == false)
@@ -80,7 +80,7 @@ public class MusicAdapter extends BaseAdapter {
 					MusicEncoder m_Encoder = new MusicEncoder(encodedName, mp3Name);
 					m_Encoder.processBytes();
 
-					MusicActivity.data[p1].setDecoded(true);
+					MusicActivity.data.get(p1).setDecoded(true);
 					notifyDataSetChanged();
 				}
 			});

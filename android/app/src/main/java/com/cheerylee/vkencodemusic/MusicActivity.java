@@ -23,6 +23,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,6 +41,9 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+// TODO: для поиска SD-карты. Заменить на более рациональное решение, если такое есть.
+import android.support.v4.content.ContextCompat;
+
 public class MusicActivity extends Activity {
 
 	private static final String TAG = "vk-encoder";
@@ -48,10 +52,11 @@ public class MusicActivity extends Activity {
 	static boolean hasDatabase = false;
 
 	static String filesDir;
-	static String encodedPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.vkontakte.android/files/Music/";
+	static String vkMusicPath = "/Android/data/com.vkontakte.android/files/Music/";
 	static String musicPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Music/";
+	static String[] storagePath;
 
-	public static Song[] data = { };
+	public static ArrayList<Song> data = new ArrayList<Song>();
 	private MusicAdapter adapter;
 
 	@Override
@@ -62,6 +67,7 @@ public class MusicActivity extends Activity {
 		filesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.cheerylee.vkencodemusic/";
 
 		hasDatabase = copyDatabase();
+		storagePath = findStorages(this);
 
 		ListView list = (ListView) findViewById(R.id.activity_music_list);
 		adapter = new MusicAdapter(this);
@@ -123,6 +129,24 @@ public class MusicActivity extends Activity {
 	}
 
 	/**
+	 * Ищет все доступные хранилища
+	 * @returns массив путей, включая путь к кэшу ВК
+	 */
+	private String[] findStorages(Context context) {
+		File[] list = ContextCompat.getExternalFilesDirs(context, null);
+		String[] storages = new String[list.length];
+		String appPath = "/Android/data/com.cheerylee.vkencodemusic/files";
+		
+		for (int i = 0; i < list.length; i++) {
+			storages[i] = list[i].getAbsolutePath();
+			storages[i] = storages[i].substring(0, storages[i].length() - appPath.length());
+			storages[i] += vkMusicPath;
+		}
+		
+		return storages;
+	}
+
+	/**
 	 * Копирует базу данных из VK в приложение
 	 * @returns успешно ли
 	 */
@@ -158,67 +182,79 @@ public class MusicActivity extends Activity {
 	private void reloadMusicList() {
 		new Thread(){
 
+			public boolean findSongs(File dir, ArrayList<Song> songData) {
+				File[] list = dir.listFiles();
+
+				if (list != null) {
+					SQLReader reader = null;
+
+					if (hasDatabase) {
+						try {
+							reader = new SQLReader(filesDir + "databaseVerThree.db");
+						} catch (Exception e) {
+							Log.e(TAG, "Couldn't instantiate db reader", e);
+							reader = null;
+						}
+					}
+
+					for (File file : list) {
+						Song songItem = new Song();
+						String ext = ".encoded";
+						String name = file.getName();
+						songItem.setFilename(name.substring(0, name.length() - ext.length()));
+						songItem.setPath(file.getAbsolutePath());
+
+						if (reader != null) {
+							String[] meta = reader.getSong(songItem.getFilename());
+							if (meta != null) {
+								songItem.setTitle(meta[0]);
+								songItem.setArtist(meta[1]);
+							} else {
+								Log.d(TAG, "Data for " + songItem.getFilename() + " doesnt exist.");
+							}
+						}
+
+						// if (new File(internalMusicPath + "/" + songItem.getFilename() + ".mp3").exists() || 
+						// 	new File(sdMusicPath + "/" + songItem.getFilename() + ".mp3").exists()) {
+						// 	songItem.setDecoded(true);
+						// }
+
+						songData.add(songItem);
+					}
+					hideWarning();
+
+					return true;
+				} else {
+					return false;
+				}
+			}
+
 			@Override
 			public void run() {
-				boolean success = false;
+				boolean[] success = new boolean[storagePath.length];
+				int successCounter = 0;
 
-				File dir = new File(encodedPath);
+				ArrayList<Song> songData = new ArrayList<Song>();
 
-				if (dir.exists()) {
-					File[] list = dir.listFiles();
-
-					if (list != null) {
-
-						SQLReader reader = null;
-
-						if (hasDatabase) {
-							try {
-								reader = new SQLReader(filesDir + "databaseVerThree.db");
-							} catch (Exception e) {
-								Log.e(TAG, "Couldn't instantiate db reader", e);
-								reader = null;
-							}
-						}
-
-						ArrayList<Song> songData = new ArrayList<Song>();
-
-						for (File file : list) {
-							Song songItem = new Song();
-							String ext = ".encoded";
-							String name = file.getName();
-							songItem.setFilename(name.substring(0, name.length() - ext.length()));
-
-							if (reader != null) {
-								String[] meta = reader.getSong(songItem.getFilename());
-								if (meta != null) {
-									songItem.setTitle(meta[0]);
-									songItem.setArtist(meta[1]);
-								} else {
-									Log.d(TAG, "Data for " + songItem.getFilename() + " doesnt exist.");
-								}
-							}
-
-							if (new File(musicPath + "/" + songItem.getFilename() + ".mp3").exists()) {
-								songItem.setDecoded(true);
-							}
-
-							songData.add(songItem);
-						}
-
-						synchronized (data) {
-							data = songData.toArray(new Song[songData.size()]);
-						}
-						doUpdateAdapter();
-						hideWarning();
-						
-						success = true;
-					}
-					
-					if (list == null || list.length < 1)
-						doSetWarning(getString(R.string.warn_not_found));
+				for (int i = 0; i < storagePath.length; i++) {
+					success[i] = findSongs(new File(storagePath[i]), songData);
+					Log.d(TAG, storagePath[i]);
 				}
 
-				if (!success) {
+				if (songData.size() < 1)
+					doSetWarning(getString(R.string.warn_not_found));
+
+				synchronized (data) {
+					data = songData;
+				}
+					
+				doUpdateAdapter();
+
+				for (int i = 0; i < success.length; i++)
+					if (success[i] == true)
+						successCounter++;
+
+				if (successCounter < success.length) {
 					doSetWarning("Error while reading list");
 				}
 			}
@@ -262,8 +298,8 @@ public class MusicActivity extends Activity {
 		Song[] data;
 		ProgressDialog dialog;
 
-		public ProcessTask(Song[] data) {
-			this.data = data;
+		public ProcessTask(ArrayList<Song> data) {
+			this.data = data.toArray(new Song[data.size()]);
 			dialog = new ProgressDialog(MusicActivity.this);
 		}
 
@@ -276,10 +312,10 @@ public class MusicActivity extends Activity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			for (int i = 0; i < data.length; i++) {
-				Song songItem = data[i];
+			for (int j = 0; j < data.length; j++) {
+				Song songItem = data[j];
 
-				String filename = MusicActivity.encodedPath + songItem.getFilename() + ".encoded";
+				String filename = songItem.getPath();
 				String mp3Name;
 				
 				if (hasDatabase == false)
@@ -290,7 +326,7 @@ public class MusicActivity extends Activity {
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
 				m_Encoder.processBytes();
 
-				data[i].setDecoded(true);
+				data[j].setDecoded(true);
 			}
 
 			return null;
