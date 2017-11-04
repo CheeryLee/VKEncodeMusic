@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource>
+		<file>../data/draganddrop.png</file>
+    </qresource>
+</RCC> 
