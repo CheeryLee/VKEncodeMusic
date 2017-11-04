@@ -55,9 +55,7 @@ public class MusicActivity extends Activity {
 
 	public static ArrayList<Song> data = new ArrayList<Song>();
 	private MusicAdapter adapter;
-	private static Context context;
 
-	// Объекты настроек
 	public static boolean useHumanityFilename;
 
 	@Override
@@ -73,8 +71,6 @@ public class MusicActivity extends Activity {
 		ListView list = (ListView) findViewById(R.id.activity_music_list);
 		adapter = new MusicAdapter(this);
 		list.setAdapter(adapter);
-
-		context = getApplicationContext();
 	}
 
 	@Override
@@ -107,6 +103,12 @@ public class MusicActivity extends Activity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 
@@ -127,12 +129,6 @@ public class MusicActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu, menu);
-		return true;
-	}
-
-	@Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 		reloadMusicList();
 	}
@@ -142,7 +138,13 @@ public class MusicActivity extends Activity {
 	 * @returns массив путей, включая путь к кэшу ВК
 	 */
 	public static String[] findStorages(Context context) {
-		File[] list = context.getExternalFilesDirs(null);
+		File[] list = {};
+		if (android.os.Build.VERSION.SDK_INT >= 19) {
+			list = context.getExternalFilesDirs(null);
+		} else {
+			list = new File[]{context.getExternalFilesDir(null)};
+		}
+
 		String[] storages = new String[list.length];
 		String appPath = "/Android/data/com.cheerylee.vkencodemusic/files";
 
@@ -241,7 +243,6 @@ public class MusicActivity extends Activity {
 			@Override
 			public void run() {
 				boolean[] success = new boolean[storagePath.length];
-				int successCounter = 0;
 
 				ArrayList<Song> songData = new ArrayList<Song>();
 
@@ -258,14 +259,6 @@ public class MusicActivity extends Activity {
 				}
 
 				doUpdateAdapter();
-
-				for (int i = 0; i < success.length; i++)
-					if (success[i] == true)
-						successCounter++;
-
-				if (successCounter < success.length) {
-					doSetWarning("Error while reading list");
-				}
 			}
 		}.start();
 	}
