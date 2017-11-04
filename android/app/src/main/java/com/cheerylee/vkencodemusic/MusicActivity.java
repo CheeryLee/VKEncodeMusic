@@ -41,9 +41,6 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-// TODO: для поиска SD-карты. Заменить на более рациональное решение, если такое есть.
-import android.support.v4.content.ContextCompat;
-
 public class MusicActivity extends Activity {
 
 	private static final String TAG = "vk-encoder";
@@ -147,7 +144,7 @@ public class MusicActivity extends Activity {
 	 * @returns массив путей, включая путь к кэшу ВК
 	 */
 	private String[] findStorages(Context context) {
-		File[] list = ContextCompat.getExternalFilesDirs(context, null);
+		File[] list = context.getExternalFilesDirs(null);
 		String[] storages = new String[list.length];
 		String appPath = "/Android/data/com.cheerylee.vkencodemusic/files";
 		

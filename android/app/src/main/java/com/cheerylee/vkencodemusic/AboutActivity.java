@@ -30,13 +30,13 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        
+
         TextView ver_text = (TextView)findViewById(R.id.ver_text);
         TextView about_glm_text = (TextView)findViewById(R.id.about_glm_text);
         TextView about_github_text = (TextView)findViewById(R.id.about_github_text);
         TextView about_4pda_text = (TextView)findViewById(R.id.about_4pda_post_text);
 
-	ver_text.setText("ver. " + BuildConfig.VERSION_NAME);
+		ver_text.setText("ver. " + BuildConfig.VERSION_NAME);
         about_glm_text.setMovementMethod(LinkMovementMethod.getInstance());
         about_github_text.setMovementMethod(LinkMovementMethod.getInstance());
         about_4pda_text.setMovementMethod(LinkMovementMethod.getInstance());
