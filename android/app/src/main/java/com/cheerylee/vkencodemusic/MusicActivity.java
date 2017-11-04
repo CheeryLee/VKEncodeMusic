@@ -21,25 +21,25 @@ package com.cheerylee.vkencodemusic;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 public class MusicActivity extends Activity {
 
@@ -56,7 +56,6 @@ public class MusicActivity extends Activity {
 	public static ArrayList<Song> data = new ArrayList<Song>();
 	private MusicAdapter adapter;
 	private static Context context;
-	public static Settings m_Settings;
 
 	// Объекты настроек
 	public static boolean useHumanityFilename;
@@ -76,14 +75,13 @@ public class MusicActivity extends Activity {
 		list.setAdapter(adapter);
 
 		context = getApplicationContext();
-		m_Settings = new Settings(context, Context.MODE_PRIVATE);
-
-		useHumanityFilename = m_Settings.getBoolean("useHumanityFilename");
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		useHumanityFilename = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("PREF_NAME_HUMANITY", true);
 
 		if (android.os.Build.VERSION.SDK_INT >= 23) {
 			if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -117,7 +115,7 @@ public class MusicActivity extends Activity {
 				new ProcessTask(data).execute();
 				return true;
 			case R.id.action_settings:
-				Intent settings_intent = new Intent(MusicActivity.this, SettingsActivity.class);
+				Intent settings_intent = new Intent(MusicActivity.this, PreferencesActivity.class);
 				startActivity(settings_intent);
 				return true;
 			case R.id.action_about:
@@ -143,17 +141,17 @@ public class MusicActivity extends Activity {
 	 * Ищет все доступные хранилища
 	 * @returns массив путей, включая путь к кэшу ВК
 	 */
-	private String[] findStorages(Context context) {
+	public static String[] findStorages(Context context) {
 		File[] list = context.getExternalFilesDirs(null);
 		String[] storages = new String[list.length];
 		String appPath = "/Android/data/com.cheerylee.vkencodemusic/files";
-		
+
 		for (int i = 0; i < list.length; i++) {
 			storages[i] = list[i].getAbsolutePath();
 			storages[i] = storages[i].substring(0, storages[i].length() - appPath.length());
 			storages[i] += vkMusicPath;
 		}
-		
+
 		return storages;
 	}
 
@@ -169,10 +167,10 @@ public class MusicActivity extends Activity {
 			File myDir = new File(filesDir);
 			if (!myDir.exists())
 				myDir.mkdirs();
-				
+
 			Process p = Runtime.getRuntime().exec(copy);
 			p.waitFor();
-			return true;
+			return new File(filesDir, "databaseVerThree.db").exists();
 		} catch (Exception ex) {
 			Log.e(TAG, "Error while copying db", ex);
 			return false;
@@ -258,7 +256,7 @@ public class MusicActivity extends Activity {
 				synchronized (data) {
 					data = songData;
 				}
-					
+
 				doUpdateAdapter();
 
 				for (int i = 0; i < success.length; i++)
@@ -283,7 +281,7 @@ public class MusicActivity extends Activity {
 				}
 			});
 	}
-	
+
 	private void hideWarning() {
 		handler.post(new Runnable(){
 
@@ -328,12 +326,12 @@ public class MusicActivity extends Activity {
 
 				String filename = songItem.getPath();
 				String mp3Name = "";
-				
+
 				if (useHumanityFilename == false || hasDatabase == false)
 					mp3Name = MusicActivity.musicPath + songItem.getFilename() + ".mp3";
 				if (useHumanityFilename == true && hasDatabase == true)
 					mp3Name = MusicActivity.musicPath + songItem.getArtist() + " - " + songItem.getTitle() + ".mp3";
-				
+
 				MusicEncoder m_Encoder = new MusicEncoder(filename, mp3Name);
 				m_Encoder.processBytes();
 

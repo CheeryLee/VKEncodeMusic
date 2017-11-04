@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android" >
+	
+	<CheckBoxPreference
+		android:key="PREF_NAME_HUMANITY" 
+		android:title="@string/settings_use_humanity_filename" 
+		android:summary="@string/settings_use_humanity_filename_desc"   
+		android:defaultValue="true" />
+	
+	<Preference
+		android:key="PREF_VIEW_STORAGES" 
+		android:title="@string/settings_storage" 
+		android:summary=""  
+		android:defaultValue="" />
+	
+</PreferenceScreen>
