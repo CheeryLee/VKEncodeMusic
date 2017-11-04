@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:layout_gravity="center">
+
+		<TextView
+			android:id="@+id/about_logo_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="@string/app_name"
+			android:textSize="30sp"/>
+
+		<TextView
+			android:id="@+id/ver_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:padding="12dp"/>
+
+		<TextView
+			android:id="@+id/about_description_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/app_description"
+			android:gravity="center"
+			android:padding="12dp"/>
+
+		<GridLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/gridLayout"
+			android:columnCount="2"
+			android:rowCount="3"
+			android:layout_gravity="center"
+			android:padding="12dp">
+
+			<TextView
+				android:id="@+id/about_dev_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/glm_string"/>
+
+			<TextView
+				android:id="@+id/about_glm_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/god_loves_me"/>
+
+			<TextView
+				android:id="@+id/about_src_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/github_string"/>
+
+			<TextView
+				android:id="@+id/about_github_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/about_github"/>
+
+			<TextView
+				android:id="@+id/about_4pda_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/_4pda_string"/>
+
+			<TextView
+				android:id="@+id/about_4pda_post_text"
+				android:gravity="center"
+				android:layout_columnWeight="1"
+				android:text="@string/about_4pda"/>
+
+		</GridLayout>
+
+	</LinearLayout>
+
+</ScrollView>
+

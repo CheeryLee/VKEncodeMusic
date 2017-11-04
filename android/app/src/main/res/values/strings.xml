@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">VKEncodeMusic</string>
+    <string name="app_settings">Настройки</string>
+    <string name="app_about">О программе</string>
+    <string name="app_description">Программа позволяет перекодировать ENCODED-файлы в MP3 для прослушивания их в стороннем плеере.\n\nСначала нужно сохранить композицию в кэш ВК, затем запустить программу.</string>
+    
+    <string name="glm_string">Разработка:</string>
+    <string name="github_string">Исходный код:</string>
+    <string name="_4pda_string">4PDA:</string>
+    <string name="god_loves_me"><a href="https://vk.com/cheerylee">CheeryLee</a>, <a href="https://github.com/iillyyaa2033">iillyyaa2033</a></string>
+    <string name="about_github"><a href="https://github.com/CheeryLee/VKEncodeMusic">GitHub</a></string>
+    <string name="about_4pda"><a href="https://4pda.ru/forum/index.php?showtopic=246233&amp;st=14600#entry62530686">Cсылка на пост</a></string>
+
+    <string name="warn_not_found">Не найдено ни одной сохраненной композиции ВК.\nПопробуйте сохранить в кэш еще раз.</string>
+    <string name="warn_not_mounted">Невозможно получить доступ к памяти</string>
+    <string name="warn_not_official">Установлено модифицированное приложение ВК.\nВ процессе работы программы могут возникнуть ошибки.</string>
+
+    <string name="settings_storage">Доступные хранилища:</string>
+    <string name="settings_use_humanity_filename">По возможности сохранять с читаемым именем</string>
+    <string name="settings_use_humanity_filename_desc">Исполнитель - Композиция.mp3</string>
+</resources>
