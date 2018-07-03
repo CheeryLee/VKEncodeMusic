@@ -164,6 +164,10 @@ public class MusicActivity extends Activity {
 	private boolean copyDatabase() {
 		// TODO: move into external thread
 
+		File database = new File(filesDir + "databaseVerThree.db");
+		if (database.exists())
+			database.delete();
+
 		try {
 			String copy[] = {"su", "-c", "cp /data/data/com.vkontakte.android/databases/databaseVerThree.db " + filesDir + "databaseVerThree.db"};
 			File myDir = new File(filesDir);
