@@ -34,7 +34,8 @@ report_*.txt
 captures/ 
 
 # Intellij
-*.iml 
+*.iml
+.idea 
 
 #Keystore files
 *.jks

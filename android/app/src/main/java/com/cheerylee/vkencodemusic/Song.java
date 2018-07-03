@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Alexander "CheeryLee" Pluzhnikov
+ * Copyright (c) 2018 Alexander "CheeryLee" Pluzhnikov
  * 
  * This file is part of VKEncodeMusic.
  * 
